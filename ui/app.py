@@ -1,5 +1,6 @@
 import sys
 import os
+USE_CAMERA = False
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
@@ -181,15 +182,20 @@ elif choice == "Live Attendance":
 
     run = st.button("▶ Start Camera")
     stop = st.button("⏹ Stop Camera")
+    if not USE_CAMERA:
+        st.warning("⚠️ Camera is disabled in deployed version")
 
     FRAME = st.image([])
     status = st.empty()
 
-    cap = cv2.VideoCapture(0)
+    cap = None
+    if USE_CAMERA:
+        cap = cv2.VideoCapture(0)
+
     frame_count = {}
     marked_users = set()
 
-    while run:
+    while run and USE_CAMERA:
         ret, frame = cap.read()
         if not ret:
             st.error("Camera error")
