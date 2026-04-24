@@ -7,8 +7,7 @@ import streamlit as st
 import pandas as pd
 import cv2
 import plotly.express as px
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import av
+
 
 
 from core.detection import detect_faces
@@ -131,56 +130,69 @@ if choice == "Home":
 
 # ================= LIVE =================
 
-
 elif choice == "Live Attendance":
     st.markdown('<div class="title">🎥 Live Attendance</div>', unsafe_allow_html=True)
 
-    status = st.empty()
+    # 🔁 CHANGE THIS BASED ON WHERE YOU RUN
+    USE_CAMERA = True   # 👉 True for local, False for deployed
 
-    frame_count = {}
-    marked_users = set()
+    if not USE_CAMERA:
+        st.warning("⚠️ Camera not supported in deployed version")
+        st.info("Run this project locally to use live attendance.")
+    else:
+        start = st.button("▶ Start Camera")
+        stop = st.button("⏹ Stop Camera")
 
-    class VideoProcessor(VideoTransformerBase):
-        def transform(self, frame):
-            img = frame.to_ndarray(format="bgr24")
+        FRAME_WINDOW = st.image([])
+        status = st.empty()
 
-            faces, gray = detect_faces(img)
-            current_names = []
+        frame_count = {}
+        marked_users = set()
 
-            for (x, y, w, h) in faces:
-                face = img[y:y+h, x:x+w]
-                face = preprocess_face(face)
+        if start:
+            cap = cv2.VideoCapture(0)
 
-                name = compare_faces(face)
-                current_names.append(name)
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    st.error("Camera not working")
+                    break
 
-                if name != "Unknown":
-                    frame_count[name] = frame_count.get(name, 0) + 1
+                faces, gray = detect_faces(frame)
+                current_names = []
 
-                    # ✅ Mark only once
-                    if frame_count[name] == 10 and name not in marked_users:
-                        mark_attendance(name)
-                        marked_users.add(name)
-                        status.success(f"✅ {name} marked present")
+                for (x, y, w, h) in faces:
+                    face = frame[y:y+h, x:x+w]
+                    face = preprocess_face(face)
 
-                cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,255), 2)
-                cv2.putText(img, name, (x,y-10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2)
+                    name = compare_faces(face)
+                    current_names.append(name)
 
-            # Reset logic
-            for name in list(frame_count.keys()):
-                if name not in current_names:
-                    frame_count[name] = 0
+                    if name != "Unknown":
+                        frame_count[name] = frame_count.get(name, 0) + 1
 
-            return img
+                        # ✅ Only once per session
+                        if frame_count[name] == 10 and name not in marked_users:
+                            mark_attendance(name)
+                            marked_users.add(name)
+                            status.success(f"✅ {name} marked present")
 
-    webrtc_streamer(
-        key="attendance",
-        video_processor_factory=VideoProcessor,
-        media_stream_constraints={"video": True, "audio": False},
-        async_processing=True
-    )
+                    cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,255), 2)
+                    cv2.putText(frame, name, (x,y-10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2)
 
+                # Reset logic
+                for name in list(frame_count.keys()):
+                    if name not in current_names:
+                        frame_count[name] = 0
+
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                FRAME_WINDOW.image(frame)
+
+                if stop:
+                    break
+
+            cap.release()
 
 
 # ================= DASHBOARD =================
