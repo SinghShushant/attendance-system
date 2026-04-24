@@ -233,7 +233,8 @@ elif choice == "Live Attendance":
         if stop:
             break
 
-    cap.release()
+    if cap:
+        cap.release()
 
 # ================= DASHBOARD =================
 elif choice == "Dashboard":
