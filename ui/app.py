@@ -7,9 +7,9 @@ import streamlit as st
 import pandas as pd
 import cv2
 import plotly.express as px
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 import av
 
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 from core.detection import detect_faces
 from core.preprocessing import preprocess_face
@@ -130,10 +130,13 @@ if choice == "Home":
         """, unsafe_allow_html=True)
 
 # ================= LIVE =================
+
+
 elif choice == "Live Attendance":
     st.markdown('<div class="title">🎥 Live Attendance</div>', unsafe_allow_html=True)
 
     status = st.empty()
+
     frame_count = {}
     marked_users = set()
 
@@ -141,7 +144,7 @@ elif choice == "Live Attendance":
         def transform(self, frame):
             img = frame.to_ndarray(format="bgr24")
 
-            faces, _ = detect_faces(img)
+            faces, gray = detect_faces(img)
             current_names = []
 
             for (x, y, w, h) in faces:
@@ -154,6 +157,7 @@ elif choice == "Live Attendance":
                 if name != "Unknown":
                     frame_count[name] = frame_count.get(name, 0) + 1
 
+                    # ✅ Mark only once
                     if frame_count[name] == 10 and name not in marked_users:
                         mark_attendance(name)
                         marked_users.add(name)
@@ -163,7 +167,7 @@ elif choice == "Live Attendance":
                 cv2.putText(img, name, (x,y-10),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2)
 
-            # reset counts
+            # Reset logic
             for name in list(frame_count.keys()):
                 if name not in current_names:
                     frame_count[name] = 0
@@ -174,7 +178,10 @@ elif choice == "Live Attendance":
         key="attendance",
         video_processor_factory=VideoProcessor,
         media_stream_constraints={"video": True, "audio": False},
+        async_processing=True
     )
+
+
 
 # ================= DASHBOARD =================
 elif choice == "Dashboard":
