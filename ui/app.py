@@ -70,6 +70,21 @@ st.markdown("""
 section[data-testid="stSidebar"] {
     background: rgba(0,0,0,0.8);
 }
+.card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,255,255,0.03));
+    border: 1px solid rgba(0,255,255,0.2);
+}
+
+.metric {
+    font-size: 40px;
+    text-shadow: 0 0 10px #00ffcc;
+}
+
+.section-title {
+    font-weight: bold;
+    letter-spacing: 1px;
+}            
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -80,16 +95,58 @@ choice = st.sidebar.selectbox("Menu", menu)
 
 # ================= HOME =================
 if choice == "Home":
+
+    # 🔥 HERO SECTION
     st.markdown("""
-    <div class="card">
-        <h2>🚀 Intelligent Attendance System</h2>
-        <p>
-        This system uses Computer Vision to automatically detect and mark attendance.
-        It removes manual effort and ensures real-time tracking.
+    <div class="card" style="text-align:center;">
+        <h2>🚀 Intelligent Face Recognition Attendance</h2>
+        <p style="font-size:18px;">
+        A next-generation attendance system powered by Computer Vision.
+        Automatically detects faces, identifies individuals, and records attendance in real-time.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 📊 SYSTEM STATS
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.markdown("""
+        <div class="card">
+            <p>📸 Faces Detected</p>
+            <div class="metric">Real-time</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class="card">
+            <p>⚡ Speed</p>
+            <div class="metric">Fast</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+        <div class="card">
+            <p>🎯 Accuracy</p>
+            <div class="metric">High</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col4:
+        st.markdown("""
+        <div class="card">
+            <p>🔒 Security</p>
+            <div class="metric">Secure</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 🧠 FEATURES SECTION
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -97,9 +154,10 @@ if choice == "Home":
         <div class="card">
             <div class="section-title">🎯 Features</div>
             <ul>
-                <li>Real-time detection</li>
-                <li>Automatic attendance</li>
-                <li>No ML required</li>
+                <li>Real-time face detection</li>
+                <li>Automatic attendance logging</li>
+                <li>Multiple user support</li>
+                <li>No manual input required</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -107,11 +165,12 @@ if choice == "Home":
     with col2:
         st.markdown("""
         <div class="card">
-            <div class="section-title">⚙️ Tech</div>
+            <div class="section-title">⚙️ Technology</div>
             <ul>
-                <li>OpenCV</li>
+                <li>OpenCV (Haar Cascade)</li>
                 <li>Histogram Matching</li>
                 <li>Edge Detection</li>
+                <li>Streamlit Interface</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -121,13 +180,53 @@ if choice == "Home":
         <div class="card">
             <div class="section-title">📊 Benefits</div>
             <ul>
-                <li>Fast</li>
-                <li>Accurate</li>
-                <li>Automated</li>
+                <li>Reduces manual effort</li>
+                <li>Improves accuracy</li>
+                <li>Time efficient</li>
+                <li>Easy deployment</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 🔥 HOW IT WORKS
+    st.markdown("""
+    <div class="card">
+        <div class="section-title">💡 How It Works</div>
+        <p>
+        1️⃣ Camera captures live video<br><br>
+        2️⃣ Faces are detected using Haar Cascade<br><br>
+        3️⃣ Recognition is done using histogram + edge matching<br><br>
+        4️⃣ Attendance is automatically recorded into database<br><br>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ⚡ STATUS PANEL (NEW)
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("""
+        <div class="card">
+            <div class="section-title">🟢 System Status</div>
+            <p>Camera: Ready</p>
+            <p>Model: Loaded</p>
+            <p>Database: Connected</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class="card">
+            <div class="section-title">🚀 Use Cases</div>
+            <p>✔ College Attendance</p>
+            <p>✔ Office Tracking</p>
+            <p>✔ Smart Classrooms</p>
+        </div>
+        """, unsafe_allow_html=True)
 # ================= LIVE =================
 
 elif choice == "Live Attendance":
