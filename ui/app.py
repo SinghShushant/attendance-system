@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] {
 
 st.markdown('<div class="title">⚡ Quantum Attendance System</div>', unsafe_allow_html=True)
 
-menu = ["Home", "Live Attendance", "Dashboard"]
+menu = ["Home", "Add Student", "Live Attendance", "Dashboard"]
 choice = st.sidebar.selectbox("Menu", menu)
 
 # ================= HOME =================
@@ -227,6 +227,52 @@ if choice == "Home":
             <p>✔ Smart Classrooms</p>
         </div>
         """, unsafe_allow_html=True)
+
+# ================= Student UI =================
+
+elif choice == "Add Student":
+    st.markdown('<div class="title">➕ Add New Student</div>', unsafe_allow_html=True)
+
+    import os
+    import time
+
+    name = st.text_input("Enter Student Name")
+
+    start = st.button("📸 Start Capture")
+
+    if name and start:
+        dataset_path = f"dataset/{name}"
+
+        if not os.path.exists(dataset_path):
+            os.makedirs(dataset_path)
+
+        cap = cv2.VideoCapture(0)
+
+        st.info("Look at camera... Capturing will start")
+
+        count = 0
+        FRAME_WINDOW = st.image([])
+
+        while count < 20:
+            ret, frame = cap.read()
+            if not ret:
+                st.error("Camera not working")
+                break
+
+            # Save image
+            img_path = f"{dataset_path}/{count}.jpg"
+            cv2.imwrite(img_path, frame)
+
+            # Show live
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            FRAME_WINDOW.image(frame)
+
+            count += 1
+            time.sleep(0.2)
+
+        cap.release()
+        st.success(f"✅ {name} added successfully!")
+
 # ================= LIVE =================
 
 elif choice == "Live Attendance":
