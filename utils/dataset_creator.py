@@ -41,7 +41,7 @@ while True:
         count += 1
 
         cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
-        cv2.putText(frame, f"Images: {count}", (10,30),
+        cv2.putText(frame, f"Images: {count}", (40,50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 
         time.sleep(0.3)
